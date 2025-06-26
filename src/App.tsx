@@ -63,7 +63,7 @@ function App() {
         });
 
         const data = await response.json();
-        setGreeting(JSON.stringify(data, null, 2));
+        setGreeting(data);
       } catch (error) {
         console.error("API call failed:", error);
         setGreeting("API call failed");
