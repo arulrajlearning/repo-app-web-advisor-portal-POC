@@ -10,6 +10,8 @@ function App() {
   
   const {signOut} = useAuthenticator();
   const [idToken, setIdToken] = useState<string | null>(null);
+  const [greeting, setGreeting] = useState<string>("")
+
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
   console.log('cognito token', idToken);
   useEffect(() => {
@@ -47,6 +49,29 @@ function App() {
 
     getToken();
   }, []);
+
+  useEffect(() => {
+    if (!idToken) return;
+
+    async function callApi() {
+      try {
+        const response = await fetch("https://ztf3yhcase.execute-api.us-east-1.amazonaws.com/dev/Greeting", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        });
+
+        const data = await response.json();
+        setGreeting(JSON.stringify(data, null, 2));
+      } catch (error) {
+        console.error("API call failed:", error);
+        setGreeting("API call failed");
+      }
+    }
+
+    callApi();
+  }, [idToken]);
 
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
