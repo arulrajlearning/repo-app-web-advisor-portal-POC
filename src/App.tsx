@@ -1,42 +1,48 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { generateClient } from "aws-amplify/data";
+import React, { useEffect, useState } from 'react';
 
-const client = generateClient<Schema>();
+type GreetingResponse = {
+  message: string;
+};
 
 function App() {
-  const {signOut} = useAuthenticator();
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [greeting, setGreeting] = useState<GreetingResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const API_URL = 'https://ztf3yhcase.execute-api.us-east-1.amazonaws.com/dev/Greeting';
+  const cognitoTokenKey =
+    'CognitoIdentityServiceProvider.n4c3d2j9o32vbqfjt1qrbp28n.a40874b8-b081-70f1-2324-5a5f81cc56fd.idToken';
 
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
+    const fetchGreeting = async () => {
+      try {
+        const token = localStorage.getItem(cognitoTokenKey);
+        if (!token) throw new Error('No auth token found');
+
+        const res = await fetch(API_URL, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        setGreeting(data);
+      } catch (err: any) {
+        setError(err.message || 'Unknown error');
+      }
+    };
+
+    fetchGreeting();
   }, []);
 
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
-
   return (
-    <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
-      <button onClick={signOut}>Sign out</button>
-    </main>
+    <div style={{ padding: '2rem' }}>
+      <h1>Greeting from API</h1>
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {greeting ? <pre>{JSON.stringify(greeting, null, 2)}</pre> : <p>Loading...</p>}
+    </div>
   );
 }
 
