@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
 import { generateClient } from "aws-amplify/data";
-import type { AuthUser } from '@aws-amplify/auth';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 const client = generateClient<Schema>();
@@ -10,12 +9,9 @@ const client = generateClient<Schema>();
 function App() {
   
   const {signOut} = useAuthenticator();
-  const { user } = useAuthenticator((context) => [context.user]);
-
-  const typedUser: AuthUser = user;
   const [idToken, setIdToken] = useState<string | null>(null);
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-
+  console.log('cognito token', idToken);
   useEffect(() => {
     async function getToken() {
       try {
@@ -73,9 +69,6 @@ function App() {
         </a>
       </div>
       <div>
-      <p><strong>Username:</strong> {typedUser.username}</p>
-      <p><strong>User ID:</strong> {typedUser.userId}</p>
-      <p><strong>Email:</strong> {typedUser.signInDetails?.loginId}</p>
     </div>
       <button onClick={signOut}>Sign out</button>
     </main>
