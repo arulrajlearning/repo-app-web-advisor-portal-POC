@@ -1,4 +1,4 @@
-import { defineBackend } from '@aws-amplify/backend';
+import { defineBackend } from "@aws-amplify/backend";
 import { Stack } from "aws-cdk-lib";
 import {
   AuthorizationType,
@@ -9,18 +9,19 @@ import {
 } from "aws-cdk-lib/aws-apigateway";
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { myApiFunction } from "./functions/api-function/resource";
-import { auth } from './auth/resource';
-import { data } from './data/resource';
+import { auth } from "./auth/resource";
+import { data } from "./data/resource";
 
 const backend = defineBackend({
   auth,
   data,
-  myApiFunction,  
+  myApiFunction,
 });
 
 // create a new API stack
 const apiStack = backend.createStack("api-stack");
 
+// create a new REST API
 const myRestApi = new RestApi(apiStack, "RestApi", {
   restApiName: "myRestApi",
   deploy: true,
@@ -45,7 +46,6 @@ const itemsPath = myRestApi.root.addResource("items", {
     authorizationType: AuthorizationType.IAM,
   },
 });
-
 
 // add methods you would like to create to the resource path
 itemsPath.addMethod("GET", lambdaIntegration);
@@ -101,6 +101,7 @@ backend.addOutput({
         endpoint: myRestApi.url,
         region: Stack.of(myRestApi).region,
         apiName: myRestApi.restApiName,
-     },
+      },
+    },
   },
 });
