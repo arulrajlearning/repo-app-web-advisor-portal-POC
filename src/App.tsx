@@ -21,7 +21,7 @@ function App() {
         const session = await fetchAuthSession();
         const token = session.tokens?.idToken?.toString();
         setIdToken(token ?? 'No ID token found');
-      } catch (error) {
+      } catch (error) { 
         console.error('Error fetching session:', error);
         setIdToken('Error fetching token');
       }

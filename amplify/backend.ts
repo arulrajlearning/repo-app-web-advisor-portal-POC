@@ -15,7 +15,7 @@ import { data } from './data/resource';
 const backend = defineBackend({
   auth,
   data,
-  myApiFunction,
+  myApiFunction,  
 });
 
 // create a new API stack
@@ -101,7 +101,6 @@ backend.addOutput({
         endpoint: myRestApi.url,
         region: Stack.of(myRestApi).region,
         apiName: myRestApi.restApiName,
-      },
-    },
+     },
   },
 });
