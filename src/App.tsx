@@ -1,3 +1,4 @@
+//https://docs.amplify.aws/react/build-a-backend/add-aws-services/rest-api/set-up-rest-api/
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
