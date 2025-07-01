@@ -26,7 +26,7 @@ const peopleApi = new RestApi(apiStack, "PeopleApi", {
   restApiName: "PeopleApi",
   deploy: true,
   deployOptions: {
-    stageName: "dev",
+    stageName: "dev", 
   },
   defaultCorsPreflightOptions: {
     allowOrigins: Cors.ALL_ORIGINS, // Restrict this to domains you trust
@@ -43,7 +43,7 @@ const getPeopleIntegration = new LambdaIntegration(
 // create a new resource path with IAM authorization
 const itemsPath = peopleApi.root.addResource("items", {
   defaultMethodOptions: {
-    authorizationType: AuthorizationType.COGNITO,
+    authorizationType: AuthorizationType.IAM,
   },
 });
 const proxyPath = itemsPath.addResource("{proxy+}");
