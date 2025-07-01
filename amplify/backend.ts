@@ -22,8 +22,8 @@ const backend = defineBackend({
 const apiStack = backend.createStack("advisor-api-stack");
 
 // create a new REST API
-const peopleApi = new RestApi(apiStack, "PeopleApi", {
-  restApiName: "PeopleApi",
+const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
+  restApiName: "advisorPortalApi",
   deploy: true,
   deployOptions: {
     stageName: "dev", 
@@ -41,25 +41,13 @@ const getPeopleIntegration = new LambdaIntegration(
 );
 
 // create a new resource path with IAM authorization
-const itemsPath = peopleApi.root.addResource("items", {
+const itemsPath = advisorPortalApi.root.addResource("People", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.IAM,
   },
 });
-itemsPath.addMethod("GET", getPeopleIntegration);
+itemsPath.addMethod("GET", getPeopleIntegration); 
 
-
-// create a new Cognito User Pools authorizer
-const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
-  cognitoUserPools: [backend.auth.resources.userPool],
-});
-
-// create a new resource path with Cognito authorization
-const booksPath = peopleApi.root.addResource("cognito-auth-path");
-booksPath.addMethod("GET", getPeopleIntegration, {
-  authorizationType: AuthorizationType.COGNITO,
-  authorizer: cognitoAuth,
-});
 
 // create a new IAM policy to allow Invoke access to the API
 const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
@@ -67,9 +55,8 @@ const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
     new PolicyStatement({
       actions: ["execute-api:Invoke"],
       resources: [
-        `${peopleApi.arnForExecuteApi("*", "/items", "dev")}`,
-        `${peopleApi.arnForExecuteApi("*", "/items/*", "dev")}`,
-        `${peopleApi.arnForExecuteApi("*", "/cognito-auth-path", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/People", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/People/*", "dev")}`,
       ],
     }),
   ],
@@ -87,10 +74,10 @@ backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(
 backend.addOutput({
   custom: {
     API: {
-      [peopleApi.restApiName]: {
-        endpoint: peopleApi.url,
-        region: Stack.of(peopleApi).region,
-        apiName: peopleApi.restApiName,
+      [advisorPortalApi.restApiName]: {
+        endpoint: advisorPortalApi.url,
+        region: Stack.of(advisorPortalApi).region,
+        apiName: advisorPortalApi.restApiName,
       },
     },
   },
