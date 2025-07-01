@@ -21,6 +21,11 @@ const backend = defineBackend({
 // create a new API stack
 const apiStack = backend.createStack("advisor-api-stack");
 
+const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
+  cognitoUserPools: [backend.auth.resources.userPool],
+});
+
+
 // create a new REST API
 const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
   restApiName: "advisorPortalApi",
@@ -43,7 +48,8 @@ const getPeopleIntegration = new LambdaIntegration(
 // create a new resource path with IAM authorization
 const itemsPath = advisorPortalApi.root.addResource("People", {
   defaultMethodOptions: {
-    authorizationType: AuthorizationType.IAM,
+    authorizationType: AuthorizationType.COGNITO,
+    authorizer: cognitoAuth,
   },
 });
 itemsPath.addMethod("GET", getPeopleIntegration); 
