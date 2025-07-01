@@ -51,11 +51,6 @@ itemsPath.addMethod("POST", getPeopleIntegration);
 itemsPath.addMethod("DELETE", getPeopleIntegration);
 itemsPath.addMethod("PUT", getPeopleIntegration);
 
-// add a proxy resource path to the API
-itemsPath.addProxy({
-  anyMethod: true,
-  defaultIntegration: getPeopleIntegration,
-});
 
 
 // create a new Cognito User Pools authorizer
