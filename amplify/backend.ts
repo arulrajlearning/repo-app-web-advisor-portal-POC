@@ -47,10 +47,6 @@ const itemsPath = peopleApi.root.addResource("items", {
   },
 });
 itemsPath.addMethod("GET", getPeopleIntegration);
-itemsPath.addMethod("POST", getPeopleIntegration);
-itemsPath.addMethod("DELETE", getPeopleIntegration);
-itemsPath.addMethod("PUT", getPeopleIntegration);
-
 
 
 // create a new Cognito User Pools authorizer
