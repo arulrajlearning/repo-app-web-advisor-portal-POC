@@ -8,22 +8,22 @@ import {
   RestApi,
 } from "aws-cdk-lib/aws-apigateway";
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { myApiFunction } from "./functions/api-function/resource";
+import { getPeople } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
 
 const backend = defineBackend({
   auth,
   data,
-  myApiFunction,
+  getPeople,
 });
 
 // create a new API stack
-const apiStack = backend.createStack("api-stack");
+const apiStack = backend.createStack("advisor-api-stack");
 
 // create a new REST API
-const myRestApi = new RestApi(apiStack, "RestApi", {
-  restApiName: "myRestApi",
+const peopleApi = new RestApi(apiStack, "PeopleApi", {
+  restApiName: "PeopleApi",
   deploy: true,
   deployOptions: {
     stageName: "dev",
@@ -36,28 +36,19 @@ const myRestApi = new RestApi(apiStack, "RestApi", {
 });
 
 // create a new Lambda integration
-const lambdaIntegration = new LambdaIntegration(
-  backend.myApiFunction.resources.lambda
+const getPeopleIntegration = new LambdaIntegration(
+  backend.getPeople.resources.lambda
 );
 
 // create a new resource path with IAM authorization
-const itemsPath = myRestApi.root.addResource("items", {
+const itemsPath = peopleApi.root.addResource("items", {
   defaultMethodOptions: {
-    authorizationType: AuthorizationType.IAM,
+    authorizationType: AuthorizationType.COGNITO,
   },
 });
+const proxyPath = itemsPath.addResource("{proxy+}");
 
-// add methods you would like to create to the resource path
-itemsPath.addMethod("GET", lambdaIntegration);
-itemsPath.addMethod("POST", lambdaIntegration);
-itemsPath.addMethod("DELETE", lambdaIntegration);
-itemsPath.addMethod("PUT", lambdaIntegration);
-
-// add a proxy resource path to the API
-itemsPath.addProxy({
-  anyMethod: true,
-  defaultIntegration: lambdaIntegration,
-});
+proxyPath.addMethod("GET", getPeopleIntegration);
 
 // create a new Cognito User Pools authorizer
 const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
@@ -65,21 +56,21 @@ const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
 });
 
 // create a new resource path with Cognito authorization
-const booksPath = myRestApi.root.addResource("cognito-auth-path");
-booksPath.addMethod("GET", lambdaIntegration, {
+const booksPath = peopleApi.root.addResource("cognito-auth-path");
+booksPath.addMethod("GET", getPeopleIntegration, {
   authorizationType: AuthorizationType.COGNITO,
   authorizer: cognitoAuth,
 });
 
 // create a new IAM policy to allow Invoke access to the API
-const apiRestPolicy = new Policy(apiStack, "RestApiPolicy", {
+const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
   statements: [
     new PolicyStatement({
       actions: ["execute-api:Invoke"],
       resources: [
-        `${myRestApi.arnForExecuteApi("*", "/items", "dev")}`,
-        `${myRestApi.arnForExecuteApi("*", "/items/*", "dev")}`,
-        `${myRestApi.arnForExecuteApi("*", "/cognito-auth-path", "dev")}`,
+        `${peopleApi.arnForExecuteApi("*", "/items", "dev")}`,
+        `${peopleApi.arnForExecuteApi("*", "/items/*", "dev")}`,
+        `${peopleApi.arnForExecuteApi("*", "/cognito-auth-path", "dev")}`,
       ],
     }),
   ],
@@ -87,20 +78,20 @@ const apiRestPolicy = new Policy(apiStack, "RestApiPolicy", {
 
 // attach the policy to the authenticated and unauthenticated IAM roles
 backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(
-  apiRestPolicy
+  advisorApiPolicy
 );
 backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(
-  apiRestPolicy
+  advisorApiPolicy
 );
 
 // add outputs to the configuration file
 backend.addOutput({
   custom: {
     API: {
-      [myRestApi.restApiName]: {
-        endpoint: myRestApi.url,
-        region: Stack.of(myRestApi).region,
-        apiName: myRestApi.restApiName,
+      [peopleApi.restApiName]: {
+        endpoint: peopleApi.url,
+        region: Stack.of(peopleApi).region,
+        apiName: peopleApi.restApiName,
       },
     },
   },
