@@ -11,6 +11,7 @@ import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { getPeople } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
+import { EndpointType } from "aws-cdk-lib/aws-apigateway";
 
 const backend = defineBackend({
   auth,
@@ -33,11 +34,9 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
   deployOptions: {
     stageName: "dev", 
   },
-  defaultCorsPreflightOptions: {
-    allowOrigins: Cors.ALL_ORIGINS, // Restrict this to domains you trust
-    allowMethods: Cors.ALL_METHODS, // Specify only the methods you need to allow
-    allowHeaders: Cors.DEFAULT_HEADERS, // Specify only the headers you need to allow
-  },
+  endpointConfiguration: {
+    types: [EndpointType.REGIONAL],
+  }
 });
 
 // create a new Lambda integration
