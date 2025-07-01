@@ -46,9 +46,17 @@ const itemsPath = peopleApi.root.addResource("items", {
     authorizationType: AuthorizationType.IAM,
   },
 });
-const proxyPath = itemsPath.addResource("{proxy+}");
+itemsPath.addMethod("GET", getPeopleIntegration);
+itemsPath.addMethod("POST", getPeopleIntegration);
+itemsPath.addMethod("DELETE", getPeopleIntegration);
+itemsPath.addMethod("PUT", getPeopleIntegration);
 
-proxyPath.addMethod("GET", getPeopleIntegration);
+// add a proxy resource path to the API
+itemsPath.addProxy({
+  anyMethod: true,
+  defaultIntegration: getPeopleIntegration,
+});
+
 
 // create a new Cognito User Pools authorizer
 const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
