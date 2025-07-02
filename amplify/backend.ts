@@ -8,7 +8,7 @@ import {
   RestApi,
 } from "aws-cdk-lib/aws-apigateway";
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { getPeople, getProfile } from "./functions/api-function/resource";
+import { getPeopleById, getProfileById } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
 import { EndpointType } from "aws-cdk-lib/aws-apigateway";
@@ -16,8 +16,8 @@ import { EndpointType } from "aws-cdk-lib/aws-apigateway";
 const backend = defineBackend({
   auth,
   data,
-  getPeople,
-  getProfile
+  getPeopleById,
+  getProfileById
 });
 
 // create a new API stack
@@ -42,10 +42,10 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
 
 // create a new Lambda integration
 const getPeopleIntegration = new LambdaIntegration(
-  backend.getPeople.resources.lambda
+  backend.getPeopleById.resources.lambda
 );
 const getProfileIntegration = new LambdaIntegration(
-  backend.getProfile.resources.lambda
+  backend.getProfileById.resources.lambda
 );
 
 // create a new resource path with IAM authorization
