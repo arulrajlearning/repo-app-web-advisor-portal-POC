@@ -49,6 +49,31 @@ const getProfileIntegration = new LambdaIntegration(
   backend.getProfile.resources.lambda
 );
 
+const corsOptions = {
+  integration: new apigateway.MockIntegration({
+    integrationResponses: [{
+      statusCode: '200',
+      responseParameters: {
+        'method.response.header.Access-Control-Allow-Headers': "'Authorization,X-Amz-Date,Content-Type,X-Api-Key,X-Amz-Security-Token'",
+        'method.response.header.Access-Control-Allow-Methods': "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+        'method.response.header.Access-Control-Allow-Origin': "'*'",
+      },
+    }],
+    passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+    requestTemplates: {
+      'application/json': '{"statusCode": 200}',
+    },
+  }),
+  methodResponses: [{
+    statusCode: '200',
+    responseParameters: {
+      'method.response.header.Access-Control-Allow-Headers': true,
+      'method.response.header.Access-Control-Allow-Methods': true,
+      'method.response.header.Access-Control-Allow-Origin': true,
+    },
+  }],
+};
+
 // create a new resource path with IAM authorization
 const peopleResource = advisorPortalApi.root.addResource("people", {
   defaultMethodOptions: {
@@ -59,33 +84,9 @@ const peopleResource = advisorPortalApi.root.addResource("people", {
 peopleResource.addMethod("GET", getPeopleIntegration); 
 peopleResource.addMethod(
   "OPTIONS",
-  new apigateway.MockIntegration({
-    integrationResponses: [
-      {
-        statusCode: "200",
-        responseParameters: {
-          "method.response.header.Access-Control-Allow-Headers": "'*'",
-          "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
-          "method.response.header.Access-Control-Allow-Origin": "'*'",
-        },
-      },
-    ],
-    passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-    requestTemplates: {
-      "application/json": '{"statusCode": 200}',
-    },
-  }),
-  {
-    methodResponses: [
-      {
-        statusCode: "200",
-        responseParameters: {
-          "method.response.header.Access-Control-Allow-Headers": true,
-          "method.response.header.Access-Control-Allow-Methods": true,
-          "method.response.header.Access-Control-Allow-Origin": true,
-        },
-      },
-    ],
+  corsOptions.integration, {
+    methodResponses: corsOptions.methodResponses,
+    authorizationType: apigateway.AuthorizationType.NONE,
   }
 );
 
@@ -98,36 +99,11 @@ const profileResource = advisorPortalApi.root.addResource("profile", {
 profileResource.addMethod("GET", getProfileIntegration); 
 profileResource.addMethod(
   "OPTIONS",
-  new apigateway.MockIntegration({
-    integrationResponses: [
-      {
-        statusCode: "200",
-        responseParameters: {
-          "method.response.header.Access-Control-Allow-Headers": "'*'",
-          "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
-          "method.response.header.Access-Control-Allow-Origin": "'*'",
-        },
-      },
-    ],
-    passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
-    requestTemplates: {
-      "application/json": '{"statusCode": 200}',
-    },
-  }),
-  {
-    methodResponses: [
-      {
-        statusCode: "200",
-        responseParameters: {
-          "method.response.header.Access-Control-Allow-Headers": true,
-          "method.response.header.Access-Control-Allow-Methods": true,
-          "method.response.header.Access-Control-Allow-Origin": true,
-        },
-      },
-    ],
+  corsOptions.integration, {
+    methodResponses: corsOptions.methodResponses,
+    authorizationType: apigateway.AuthorizationType.NONE,
   }
 );
-
 
 // create a new IAM policy to allow Invoke access to the API
 const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
