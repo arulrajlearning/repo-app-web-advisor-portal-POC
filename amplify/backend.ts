@@ -36,11 +36,6 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
   deployOptions: {
     stageName: "dev", 
   },
-   defaultCorsPreflightOptions: {
-    allowOrigins: ['*'], // use specific domain(s) in production
-    allowMethods: ['*'], // or [ 'GET', 'POST', 'OPTIONS' ]
-    allowHeaders: ['*'],
-  },
   endpointConfiguration: {
     types: [EndpointType.REGIONAL],
   },
