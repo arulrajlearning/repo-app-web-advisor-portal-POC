@@ -57,13 +57,13 @@ const people = advisorPortalApi.root.addResource("People", {
 });
 people.addMethod("GET", getPeopleIntegration); 
 
-/*const profile = advisorPortalApi.root.addResource("Profile", {
+const profile = advisorPortalApi.root.addResource("Profile", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.COGNITO,
     authorizer: cognitoAuth,
   },
 });
-profile.addMethod("GET", getProfileIntegration);*/ 
+profile.addMethod("GET", getProfileIntegration);
 
 
 // create a new IAM policy to allow Invoke access to the API
