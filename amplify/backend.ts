@@ -30,7 +30,7 @@ const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
 
 // create a new REST API
 const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
-  restApiName: "advisorPortalApi",
+  restApiName: "advisor-portal-api",
   deploy: true,
   deployOptions: {
     stageName: "dev", 
