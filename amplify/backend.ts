@@ -17,6 +17,7 @@ const backend = defineBackend({
   auth,
   data,
   getPeople,
+  getProfile
 });
 
 // create a new API stack
@@ -44,7 +45,7 @@ const getPeopleIntegration = new LambdaIntegration(
   backend.getPeople.resources.lambda
 );
 const getProfileIntegration = new LambdaIntegration(
-  backend.getPeople.resources.lambda
+  backend.getProfile.resources.lambda
 );
 
 // create a new resource path with IAM authorization
