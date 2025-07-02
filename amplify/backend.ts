@@ -8,7 +8,7 @@ import {
   RestApi,
 } from "aws-cdk-lib/aws-apigateway";
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { getPeople } from "./functions/api-function/resource";
+import { getPeople, getProfile } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
 import { EndpointType } from "aws-cdk-lib/aws-apigateway";
@@ -17,6 +17,7 @@ const backend = defineBackend({
   auth,
   data,
   getPeople,
+  getProfile
 });
 
 // create a new API stack
@@ -43,16 +44,26 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
 const getPeopleIntegration = new LambdaIntegration(
   backend.getPeople.resources.lambda
 );
+const getProfileIntegration = new LambdaIntegration(
+  backend.getProfile.resources.lambda
+);
 
 // create a new resource path with IAM authorization
-const itemsPath = advisorPortalApi.root.addResource("People", {
+const people = advisorPortalApi.root.addResource("People", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.COGNITO,
     authorizer: cognitoAuth,
   },
 });
-itemsPath.addMethod("GET", getPeopleIntegration); 
+people.addMethod("GET", getPeopleIntegration); 
 
+const profile = advisorPortalApi.root.addResource("Profile", {
+  defaultMethodOptions: {
+    authorizationType: AuthorizationType.COGNITO,
+    authorizer: cognitoAuth,
+  },
+});
+profile.addMethod("GET", getProfileIntegration); 
 
 // create a new IAM policy to allow Invoke access to the API
 const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
@@ -62,6 +73,8 @@ const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
       resources: [
         `${advisorPortalApi.arnForExecuteApi("*", "/People", "dev")}`,
         `${advisorPortalApi.arnForExecuteApi("*", "/People/*", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/Profile", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/Profile/*", "dev")}`,
       ],
     }),
   ],
