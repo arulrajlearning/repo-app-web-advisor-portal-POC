@@ -30,8 +30,8 @@ const cognitoAuth = new CognitoUserPoolsAuthorizer(apiStack, "CognitoAuth", {
 
 
 // create a new REST API
-const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
-  restApiName: "advisorPortalApi",
+const advisorPortalApi = new RestApi(apiStack, "AdvisorPortalApi", {
+  restApiName: "AdvisorPortalApi",
   deploy: true,
   deployOptions: {
     stageName: "dev", 
@@ -81,7 +81,7 @@ const userProfileResource = advisorPortalApi.root.addResource("UserProfile", {
     authorizer: cognitoAuth,
   },
 });
-userProfileResource.addMethod("GET", userPersonalizationIntegration); 
+userProfileResource.addMethod("GET", userProfileIntegration); 
 userProfileResource.addMethod(
   "OPTIONS",
   corsOptions.integration, {
@@ -96,7 +96,7 @@ const userPersonalizationResource = advisorPortalApi.root.addResource("UserPerso
     authorizer: cognitoAuth,
   },
 });
-userPersonalizationResource.addMethod("GET", userProfileIntegration); 
+userPersonalizationResource.addMethod("GET", userPersonalizationIntegration); 
 userPersonalizationResource.addMethod(
   "OPTIONS",
   corsOptions.integration, {
