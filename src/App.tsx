@@ -4,7 +4,6 @@ import type { Schema } from "../amplify/data/resource";
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
 import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from 'aws-amplify/auth';
-import outputs from '../amplify_outputs.json';
 
 const client = generateClient<Schema>();
 
@@ -52,17 +51,12 @@ function App() {
     getToken();
   }, []);
 
-  /*useEffect(() => {
+  useEffect(() => {
     if (!idToken) return;
 
     async function callApi() {
       try {
-        const endpoint = outputs.custom.API["advisor-portal-api"].endpoint;
-        const path = '/profile';
-
-        console.log(`${endpoint}${path}`);        
-
-        const response = await fetch(`${endpoint}${path}`, {
+        const response = await fetch("https://ztf3yhcase.execute-api.us-east-1.amazonaws.com/dev/Greeting", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${idToken}`,
@@ -78,7 +72,7 @@ function App() {
     }
 
     callApi();
-  }, [idToken]);*/
+  }, [idToken]);
 
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
