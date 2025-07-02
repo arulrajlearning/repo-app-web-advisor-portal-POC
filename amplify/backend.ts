@@ -65,7 +65,7 @@ peopleResource.addMethod(
         statusCode: "200",
         responseParameters: {
           "method.response.header.Access-Control-Allow-Headers": "'*'",
-          "method.response.header.Access-Control-Allow-Methods": "*",
+          "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
           "method.response.header.Access-Control-Allow-Origin": "'*'",
         },
       },
@@ -104,7 +104,7 @@ profileResource.addMethod(
         statusCode: "200",
         responseParameters: {
           "method.response.header.Access-Control-Allow-Headers": "'*'",
-          "method.response.header.Access-Control-Allow-Methods": "*",
+          "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
           "method.response.header.Access-Control-Allow-Origin": "'*'",
         },
       },
