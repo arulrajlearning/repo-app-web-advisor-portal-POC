@@ -11,7 +11,7 @@ import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { getPeople, getProfile } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
-import { EndpointType } from "aws-cdk-lib/aws-apigateway";
+import { MockIntegration, PassthroughBehavior } from "aws-cdk-lib/aws-apigateway";
 
 const backend = defineBackend({
   auth,
@@ -61,6 +61,27 @@ const people = advisorPortalApi.root.addResource("People", {
   },
 });
 people.addMethod("GET", getPeopleIntegration); 
+people.addMethod("OPTIONS", new MockIntegration({
+  integrationResponses: [{
+    statusCode: "200",
+    responseParameters: {
+      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+      "method.response.header.Access-Control-Allow-Origin": "'*'",
+      "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+    },
+  }],
+  passthroughBehavior: PassthroughBehavior.NEVER,
+  requestTemplates: { "application/json": "{\"statusCode\": 200}" },
+}), {
+  methodResponses: [{
+    statusCode: "200",
+    responseParameters: {
+      "method.response.header.Access-Control-Allow-Headers": true,
+      "method.response.header.Access-Control-Allow-Methods": true,
+      "method.response.header.Access-Control-Allow-Origin": true,
+    },
+  }],
+});
 
 const profile = advisorPortalApi.root.addResource("Profile", {
   defaultMethodOptions: {
@@ -69,6 +90,27 @@ const profile = advisorPortalApi.root.addResource("Profile", {
   },
 });
 profile.addMethod("GET", getProfileIntegration); 
+profile.addMethod("OPTIONS", new MockIntegration({
+  integrationResponses: [{
+    statusCode: "200",
+    responseParameters: {
+      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+      "method.response.header.Access-Control-Allow-Origin": "'*'",
+      "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+    },
+  }],
+  passthroughBehavior: PassthroughBehavior.NEVER,
+  requestTemplates: { "application/json": "{\"statusCode\": 200}" },
+}), {
+  methodResponses: [{
+    statusCode: "200",
+    responseParameters: {
+      "method.response.header.Access-Control-Allow-Headers": true,
+      "method.response.header.Access-Control-Allow-Methods": true,
+      "method.response.header.Access-Control-Allow-Origin": true,
+    },
+  }],
+});
 
 // create a new IAM policy to allow Invoke access to the API
 const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
