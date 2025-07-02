@@ -60,7 +60,7 @@ const people = advisorPortalApi.root.addResource("People", {
     authorizer: cognitoAuth,
   },
 });
-//people.addMethod("GET", getPeopleIntegration); 
+people.addMethod("GET", getPeopleIntegration); 
 people.addMethod("OPTIONS", new MockIntegration({
   integrationResponses: [{
     statusCode: "200",
@@ -89,7 +89,7 @@ const profile = advisorPortalApi.root.addResource("Profile", {
     authorizer: cognitoAuth,
   },
 });
-//profile.addMethod("GET", getProfileIntegration); 
+profile.addMethod("GET", getProfileIntegration); 
 profile.addMethod("OPTIONS", new MockIntegration({
   integrationResponses: [{
     statusCode: "200",
