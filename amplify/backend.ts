@@ -50,7 +50,7 @@ const getProfileIntegration = new LambdaIntegration(
 );
 
 // create a new resource path with IAM authorization
-const peopleResource = advisorPortalApi.root.addResource("People", {
+const peopleResource = advisorPortalApi.root.addResource("people", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.COGNITO,
     authorizer: cognitoAuth,
@@ -89,7 +89,7 @@ peopleResource.addMethod(
   }
 );
 
-const profileResource = advisorPortalApi.root.addResource("Profile", {
+const profileResource = advisorPortalApi.root.addResource("profile", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.COGNITO,
     authorizer: cognitoAuth,
