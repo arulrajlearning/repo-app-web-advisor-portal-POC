@@ -12,6 +12,7 @@ import { getPeople, getProfile } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
 import { EndpointType } from "aws-cdk-lib/aws-apigateway";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
 
 const backend = defineBackend({
   auth,
@@ -61,6 +62,37 @@ const peopleResource = advisorPortalApi.root.addResource("People", {
   },
 });
 peopleResource.addMethod("GET", getPeopleIntegration); 
+peopleResource.addMethod(
+  "OPTIONS",
+  new apigateway.MockIntegration({
+    integrationResponses: [
+      {
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Headers": "'*'",
+          "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+          "method.response.header.Access-Control-Allow-Origin": "'*'",
+        },
+      },
+    ],
+    passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+    requestTemplates: {
+      "application/json": '{"statusCode": 200}',
+    },
+  }),
+  {
+    methodResponses: [
+      {
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Headers": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
+      },
+    ],
+  }
+);
 
 const profileResource = advisorPortalApi.root.addResource("Profile", {
   defaultMethodOptions: {
@@ -69,6 +101,37 @@ const profileResource = advisorPortalApi.root.addResource("Profile", {
   },
 });
 profileResource.addMethod("GET", getProfileIntegration); 
+profileResource.addMethod(
+  "OPTIONS",
+  new apigateway.MockIntegration({
+    integrationResponses: [
+      {
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Headers": "'*'",
+          "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+          "method.response.header.Access-Control-Allow-Origin": "'*'",
+        },
+      },
+    ],
+    passthroughBehavior: apigateway.PassthroughBehavior.NEVER,
+    requestTemplates: {
+      "application/json": '{"statusCode": 200}',
+    },
+  }),
+  {
+    methodResponses: [
+      {
+        statusCode: "200",
+        responseParameters: {
+          "method.response.header.Access-Control-Allow-Headers": true,
+          "method.response.header.Access-Control-Allow-Methods": true,
+          "method.response.header.Access-Control-Allow-Origin": true,
+        },
+      },
+    ],
+  }
+);
 
 
 // create a new IAM policy to allow Invoke access to the API
