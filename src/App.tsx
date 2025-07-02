@@ -4,7 +4,6 @@ import type { Schema } from "../amplify/data/resource";
 import { useAuthenticator } from '@aws-amplify/ui-react-core';
 import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { get } from 'aws-amplify/api';
 import outputs from '../amplify_outputs.json';
 
 const client = generateClient<Schema>();
