@@ -61,7 +61,7 @@ function App() {
         const endpoint = outputs.custom.API["advisor-portal-api"].endpoint;
         const path = '/profile';
 
-        console.log(apiName);        
+        console.log(`${endpoint}${path}`);        
 
         const response = await fetch(`${endpoint}${path}`, {
           method: "GET",
