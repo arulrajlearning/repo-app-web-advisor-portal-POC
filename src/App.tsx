@@ -57,7 +57,6 @@ function App() {
 
     async function callApi() {
       try {
-        const apiName = outputs.custom.API["advisor-portal-api"].apiName;
         const endpoint = outputs.custom.API["advisor-portal-api"].endpoint;
         const path = '/profile';
 
