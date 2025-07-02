@@ -34,9 +34,9 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
   deployOptions: {
     stageName: "dev", 
   },
-  endpointConfiguration: {
+  /*endpointConfiguration: {
     types: [EndpointType.REGIONAL],
-  }
+  }*/
 });
 
 // create a new Lambda integration
