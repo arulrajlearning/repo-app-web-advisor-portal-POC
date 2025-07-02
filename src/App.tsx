@@ -52,7 +52,7 @@ function App() {
     getToken();
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!idToken) return;
 
     async function callApi() {
@@ -78,7 +78,7 @@ function App() {
     }
 
     callApi();
-  }, [idToken]);
+  }, [idToken]);*/
 
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
