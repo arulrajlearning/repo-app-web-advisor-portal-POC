@@ -7,6 +7,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     headers: {
       "Access-Control-Allow-Origin": "*", // Restrict this to domains you trust
       "Access-Control-Allow-Headers": "*", // Specify only the headers you need to allow
+      "Access-Control-Allow-Methods": "OPTIONS,GET,POST",
     },
     body: JSON.stringify("Hello from getPeople[ById][ByEmailAddress] - arulraj joseph!"),
   };
