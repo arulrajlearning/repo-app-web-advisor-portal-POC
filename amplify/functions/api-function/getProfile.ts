@@ -1,3 +1,4 @@
+//call dynamodb to get or create user profile
 import type {APIGatewayProxyHandler} from "aws-lambda";
 export const handler: APIGatewayProxyHandler = async (event) => {
   console.log("event", event);
