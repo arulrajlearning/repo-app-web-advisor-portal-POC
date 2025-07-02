@@ -11,7 +11,7 @@ import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { getPeople, getProfile } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
-import { MockIntegration, PassthroughBehavior } from "aws-cdk-lib/aws-apigateway";
+import { EndpointType } from "aws-cdk-lib/aws-apigateway";
 
 const backend = defineBackend({
   auth,
@@ -35,11 +35,6 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
   deployOptions: {
     stageName: "dev", 
   },
-  defaultCorsPreflightOptions: {
-    allowOrigins: Cors.ALL_ORIGINS, // use specific domain(s) in production
-    allowMethods: Cors.ALL_METHODS, // or [ 'GET', 'POST', 'OPTIONS' ]
-    allowHeaders: Cors.DEFAULT_HEADERS,
-  },
   /*endpointConfiguration: {
     types: [EndpointType.REGIONAL],
   }*/
@@ -61,7 +56,6 @@ const people = advisorPortalApi.root.addResource("People", {
   },
 });
 people.addMethod("GET", getPeopleIntegration); 
-
 
 const profile = advisorPortalApi.root.addResource("Profile", {
   defaultMethodOptions: {
