@@ -1,4 +1,4 @@
-//call dynamodb to get or create user profile
+//call dynamodb to create, update, delete and load user personlization settings data
 import type {APIGatewayProxyHandler} from "aws-lambda";
 export const handler: APIGatewayProxyHandler = async (event) => {
   console.log("event", event);
@@ -25,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       "Access-Control-Allow-Headers": "*", // Specify only the headers you need to allow
       "Access-Control-Allow-Methods": "*",
     },
-    /*body: JSON.stringify("Hello from getProfile[ById][ByEmailAddress] - arulraj joseph!"),*/
+    /*body: JSON.stringify("Hello from UserPersonalization[ById][ByEmailAddress] - arulraj joseph!"),*/
     body: JSON.stringify(`${greeting}, ${email}!`),
   };
 };

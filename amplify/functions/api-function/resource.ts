@@ -1,9 +1,9 @@
 import { defineFunction } from "@aws-amplify/backend";
-export const getPeople = defineFunction({
-  name: "getPeople",
-  entry: "./getPeople.ts", 
+export const userProfile = defineFunction({
+  name: "UserProfile",
+  entry: "./UserProfile.ts", 
 }); 
-export const getProfile = defineFunction({
-  name: "getProfile",
-  entry: "./getProfile.ts", 
+export const userPersonalization = defineFunction({
+  name: "UserPersonalization",
+  entry: "./UserPersonalization.ts", 
 }); 

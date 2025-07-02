@@ -8,7 +8,7 @@ import {
   RestApi,
 } from "aws-cdk-lib/aws-apigateway";
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
-import { getPeople, getProfile } from "./functions/api-function/resource";
+import { userProfile, userPersonalization } from "./functions/api-function/resource";
 import { auth } from "./auth/resource";
 import { data } from "./data/resource";
 import { EndpointType } from "aws-cdk-lib/aws-apigateway";
@@ -17,8 +17,8 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 const backend = defineBackend({
   auth,
   data,
-  getPeople,
-  getProfile
+  userProfile,
+  userPersonalization
 });
 
 // create a new API stack
@@ -42,11 +42,11 @@ const advisorPortalApi = new RestApi(apiStack, "advisor-portal-api", {
 });
 
 // create a new Lambda integration
-const getPeopleIntegration = new LambdaIntegration(
-  backend.getPeople.resources.lambda
+const userProfileIntegration = new LambdaIntegration(
+  backend.userProfile.resources.lambda
 );
-const getProfileIntegration = new LambdaIntegration(
-  backend.getProfile.resources.lambda
+const userPersonalizationIntegration = new LambdaIntegration(
+  backend.userPersonalization.resources.lambda
 );
 
 const corsOptions = {
@@ -75,14 +75,14 @@ const corsOptions = {
 };
 
 // create a new resource path with IAM authorization
-const peopleResource = advisorPortalApi.root.addResource("people", {
+const userProfileResource = advisorPortalApi.root.addResource("UserProfile", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.COGNITO,
     authorizer: cognitoAuth,
   },
 });
-peopleResource.addMethod("GET", getPeopleIntegration); 
-peopleResource.addMethod(
+userProfileResource.addMethod("GET", userPersonalizationIntegration); 
+userProfileResource.addMethod(
   "OPTIONS",
   corsOptions.integration, {
     methodResponses: corsOptions.methodResponses,
@@ -90,14 +90,14 @@ peopleResource.addMethod(
   }
 );
 
-const profileResource = advisorPortalApi.root.addResource("profile", {
+const userPersonalizationResource = advisorPortalApi.root.addResource("UserPersonalization", {
   defaultMethodOptions: {
     authorizationType: AuthorizationType.COGNITO,
     authorizer: cognitoAuth,
   },
 });
-profileResource.addMethod("GET", getProfileIntegration); 
-profileResource.addMethod(
+userPersonalizationResource.addMethod("GET", userProfileIntegration); 
+userPersonalizationResource.addMethod(
   "OPTIONS",
   corsOptions.integration, {
     methodResponses: corsOptions.methodResponses,
@@ -111,8 +111,10 @@ const advisorApiPolicy = new Policy(apiStack, "AdvisorApiPolicy", {
     new PolicyStatement({
       actions: ["execute-api:Invoke"],
       resources: [
-        `${advisorPortalApi.arnForExecuteApi("*", "/People", "dev")}`,
-        `${advisorPortalApi.arnForExecuteApi("*", "/People/*", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/UserProfile", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/UserProfile/*", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/UserPersonalization", "dev")}`,
+        `${advisorPortalApi.arnForExecuteApi("*", "/UserPersonalization/*", "dev")}`,
       ],
     }),
   ],

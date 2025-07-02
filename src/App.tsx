@@ -58,7 +58,7 @@ function App() {
     async function callApi() {
       try {
         const endpoint = outputs.custom.API.advisorPortalApi.endpoint;
-        const path = 'profile';
+        const path = 'UserPersonalization'; // Adjust the path as needed
 
         console.log(`${endpoint}${path}`);        
 
