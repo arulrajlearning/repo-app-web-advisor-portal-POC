@@ -1,4 +1,4 @@
-import type {APIGatewayProxyHandler} from "aws-lambda";
+import type { APIGatewayProxyHandler } from "aws-lambda";
 export const handler: APIGatewayProxyHandler = async (event) => {
   console.log("event", event);
 
@@ -22,15 +22,46 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     + `&lon=${encodeURIComponent(longitude)}`
     + `&limit=1`
     + `&appid=${encodeURIComponent(apiKey)}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
 
-  return {
-    statusCode: 200,
-    // Modify the CORS settings below to match your specific requirements
-    headers: {
-      "Access-Control-Allow-Origin": "*", // Restrict this to domains you trust
-      "Access-Control-Allow-Headers": "*", // Specify only the headers you need to allow
-      "Access-Control-Allow-Methods": "*",
-    },
-    body: JSON.stringify(url),
-  };
+    if (Array.isArray(data) && data.length > 0) {
+      const { name, state, country } = data[0];
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "*",
+        },
+        body: JSON.stringify({ name, state, country }),
+      };
+    }
+    else {
+      return {
+        statusCode: 404,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "*",
+        },
+        body: JSON.stringify({ error: "No location found for the provided coordinates" }),
+      };
+    };
+  } catch (error) {
+    console.error("Error fetching weather data:", error);
+    return {
+      statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "*",
+      },
+      body: JSON.stringify({ error: "Failed to fetch weather data" }),
+    };
+  }
 };
