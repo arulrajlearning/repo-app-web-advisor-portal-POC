@@ -25,8 +25,8 @@ const Weather: React.FC<WeatherProps> = ({ token }) => {
 
                     
                     const endpoint = outputs.custom.API.AdvisorPortalApi.endpoint;
-                    const path = 'UserProfile'; // Adjust the path as needed
-                    const url = `${endpoint}${path}?latitude=${encodeURIComponent(latitude.toString())}&longitude=${longitude.toString()}`;
+                    const resource = 'UserProfile'; // Adjust the path as needed
+                    const url = `${endpoint}${resource}/?latitude=${encodeURIComponent(latitude.toString())}&longitude=${longitude.toString()}`;
 
 
                     console.log('cognito token', token);
