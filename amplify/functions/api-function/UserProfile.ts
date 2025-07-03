@@ -1,7 +1,6 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 export const handler: APIGatewayProxyHandler = async (event) => {
   console.log("event - ", event);
-  console.log("process.env.WEATHER_API_KEY - ", process.env.WEATHER_API_KEY);
   const latitude = event.queryStringParameters?.latitude;
   const longitude = event.queryStringParameters?.longitude;
   const apiKey = process.env.WEATHER_API_KEY!;
@@ -17,7 +16,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify({ error: "Latitude and longitude are required" }),
     };
   }
-  const locationUrl = `http://api.openweathermap.org/geo/1.0/reverse`
+  const locationUrl = process.env.Location_API_URL
     + `?lat=${encodeURIComponent(latitude)}`
     + `&lon=${encodeURIComponent(longitude)}`
     + `&limit=1`
@@ -31,7 +30,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
     if (Array.isArray(lcationData) && lcationData.length > 0) {
       const { name, state, country } = lcationData[0];
-      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`
+      const weatherUrl = process.env.Weather_API_URL
         + `?q=${encodeURIComponent(name)},${encodeURIComponent(state)},${encodeURIComponent(country)}`
         + `&appid=${encodeURIComponent(apiKey)}`;
       const weatherResponse = await fetch(weatherUrl);
