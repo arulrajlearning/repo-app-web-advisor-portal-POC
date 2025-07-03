@@ -47,6 +47,7 @@ const handleGetRequest = async (event: APIGatewayProxyEvent) => {
   const apiKey = process.env.WEATHER_API_KEY;
   const locationUrl = process.env.Location_API_URL;
   const weatherUrl = process.env.Weather_API_URL;
+  console.log(`apiKey: ${apiKey}, locationUrl: ${locationUrl}, weatherUrl: ${weatherUrl}`);
 
   if (!apiKey || !locationUrl || !weatherUrl) {
     return createResponse(500, { error: "Missing required environment variables" });
