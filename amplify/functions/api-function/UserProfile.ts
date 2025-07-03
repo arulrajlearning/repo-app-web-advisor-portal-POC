@@ -1,7 +1,7 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
 export const handler: APIGatewayProxyHandler = async (event) => {
-  console.log("event", event);
-
+  console.log("event - ", event);
+  console.log("process.env.WEATHER_API_KEY - ", process.env.WEATHER_API_KEY);
   const latitude = event.queryStringParameters?.latitude;
   const longitude = event.queryStringParameters?.longitude;
   const apiKey = process.env.WEATHER_API_KEY!;
