@@ -15,17 +15,25 @@ const Weather: React.FC<WeatherProps> = ({ token }) => {
                     const position = await new Promise<GeolocationPosition>((resolve, reject) =>
                         navigator.geolocation.getCurrentPosition(resolve, reject)
                     );
-                    console.log(position.coords.latitude);
-                    console.log(position.coords.longitude);
+
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    console.log(latitude);
+                    console.log(longitude);
                     console.log(position.coords.toJSON());
 
+                    
                     const endpoint = outputs.custom.API.AdvisorPortalApi.endpoint;
                     const path = 'UserProfile'; // Adjust the path as needed
+                    const url = `${endpoint}${path}?latitude=${encodeURIComponent(latitude.toString())}&longitude=${longitude.toString()}`;
+
 
                     console.log('cognito token', token);
+                    console.log('url', url);
 
 
-                    const response = await fetch(`${endpoint}${path}`, {
+                    const response = await fetch(url, {
                         method: "GET",
                         headers: {
                             Authorization: `Bearer ${token}`, // now correctly passed from props
