@@ -5,6 +5,7 @@ import { useAuthenticator } from '@aws-amplify/ui-react-core';
 import { generateClient } from "aws-amplify/data";
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../amplify_outputs.json';
+import Weather from "./Weather";
 
 const client = generateClient<Schema>();
 
@@ -95,6 +96,7 @@ function App() {
       </ul>
       <div>
         🥳 App successfully hosted. Try creating a new todo.
+        <Weather></Weather>
         <br />
         <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
           Review next step of this tutorial.
