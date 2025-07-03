@@ -17,29 +17,52 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify({ error: "Latitude and longitude are required" }),
     };
   }
-  const url = `http://api.openweathermap.org/geo/1.0/reverse`
+  const locationUrl = `http://api.openweathermap.org/geo/1.0/reverse`
     + `?lat=${encodeURIComponent(latitude)}`
     + `&lon=${encodeURIComponent(longitude)}`
     + `&limit=1`
     + `&appid=${encodeURIComponent(apiKey)}`;
   try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const locationResponse = await fetch(locationUrl);
+    if (!locationResponse.ok) {
+      throw new Error(`HTTP error! status: ${locationResponse.status}`);
     }
-    const data = await response.json();
+    const lcationData = await locationResponse.json();
 
-    if (Array.isArray(data) && data.length > 0) {
-      const { name, state, country } = data[0];
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "*",
-          "Access-Control-Allow-Methods": "*",
-        },
-        body: JSON.stringify({ name, state, country }),
-      };
+    if (Array.isArray(lcationData) && lcationData.length > 0) {
+      const { name, state, country } = lcationData[0];
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather`
+        + `?q=${encodeURIComponent(name)},${encodeURIComponent(state)},${encodeURIComponent(country)}`
+        + `&appid=${encodeURIComponent(apiKey)}`;
+      const weatherResponse = await fetch(weatherUrl);
+      if (!weatherResponse.ok) {
+        throw new Error(`HTTP error! status: ${weatherResponse.status}`);
+      }
+      const weatherData = await weatherResponse.json();
+      //arulraj joseph - you can use weatherData to get more details like temperature, humidity, etc.
+      if (Array.isArray(lcationData) && lcationData.length > 0) {
+        return {
+          statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "*",
+          },
+          body: JSON.stringify({ name, state, country}),
+        };
+      }
+      else {
+        return {
+          statusCode: 404,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Methods": "*",
+          },
+          body: JSON.stringify({ error: "No weather found for the provided location" }),
+        };
+      }
+
     }
     else {
       return {
