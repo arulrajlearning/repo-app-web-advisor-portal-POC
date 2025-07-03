@@ -42,7 +42,7 @@ const Weather: React.FC<WeatherProps> = ({ token }) => {
 
                     const data = await response.json();
                     console.log('API response:', data);
-                    setWeather(`${data.name}, ${data.state}, ${data.country} is ${data.temp}`); // assuming data contains name, state, and country
+                    setWeather(`${data.name}, ${data.state}, ${data.country} is ${data.temperature}`); // assuming data contains name, state, and country
                 } catch (error) {
                     console.error("API call failed:", error);
                     setWeather("API call failed");
