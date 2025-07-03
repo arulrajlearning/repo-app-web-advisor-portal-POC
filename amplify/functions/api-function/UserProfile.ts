@@ -4,7 +4,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
   const latitude = event.queryStringParameters?.latitude;
   const longitude = event.queryStringParameters?.longitude;
-  const apiKey = "18a213f18687259a868a7b5fc733958c";
+  const apiKey = process.env.WEATHER_API_KEY!;
 
   if (!latitude || !longitude) {
     return {
