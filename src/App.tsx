@@ -12,11 +12,10 @@ const client = generateClient<Schema>();
 function App() {
   
   const {signOut} = useAuthenticator();
-  const [idToken, setIdToken] = useState<string | null>(null);
+  const [idToken, setIdToken] = useState<string>("");
   const [greeting, setGreeting] = useState<string>("")
 
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  console.log('cognito token', idToken);
   useEffect(() => {
     async function getToken() {
       try {
@@ -60,9 +59,6 @@ function App() {
       try {
         const endpoint = outputs.custom.API.AdvisorPortalApi.endpoint;
         const path = 'UserPersonalization'; // Adjust the path as needed
-
-        console.log(`${endpoint}${path}`);        
-
         const response = await fetch(`${endpoint}${path}`, {
           method: "GET",
           headers: {
@@ -77,7 +73,6 @@ function App() {
         setGreeting("API call failed");
       }
     }
-
     callApi();
   }, [idToken]);
 
@@ -96,8 +91,8 @@ function App() {
       </ul>
       <div>
         🥳 App successfully hosted. Try creating a new todo.
-        <Weather></Weather>
         <br />
+        <Weather token={idToken} />
         <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
           Review next step of this tutorial.
         </a>

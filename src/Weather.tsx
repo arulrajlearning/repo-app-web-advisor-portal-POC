@@ -1,53 +1,54 @@
 import React, { useEffect, useState } from 'react';
+import outputs from '../amplify_outputs.json';
 
-type WeatherData = {
-  name: string;
-  main: {
-    temp: number;
-  };
-  weather: { description: string }[];
+type WeatherProps = {
+    token: string;
 };
 
-const Weather: React.FC = () => {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+const Weather: React.FC<WeatherProps> = ({ token }) => {
+    const [weather, setWeather] = useState<string | null>(null);
+    useEffect(() => {
+        async function getWeather() {
+            if (token) {
+                try {
 
-  useEffect(() => {
-    async function getWeather() {
-      try {
-        // Get user location
-        const position = await new Promise<GeolocationPosition>((resolve, reject) =>
-          navigator.geolocation.getCurrentPosition(resolve, reject)
-        );
-        console.log(position.coords.toJSON());
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+                    const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+                        navigator.geolocation.getCurrentPosition(resolve, reject)
+                    );
+                    console.log(position.coords.latitude);
+                    console.log(position.coords.longitude);
+                    console.log(position.coords.toJSON());
+
+                    const endpoint = outputs.custom.API.AdvisorPortalApi.endpoint;
+                    const path = 'UserProfile'; // Adjust the path as needed
+
+                    console.log('cognito token', token);
 
 
-        // Call your Lambda weather API
-        const res = await fetch(`https://your-api-id.amazonaws.com/dev/weather?lat=${lat}&lon=${lon}`);
-        if (!res.ok) throw new Error('Weather API failed');
-        const data = await res.json();
+                    const response = await fetch(`${endpoint}${path}`, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${token}`, // now correctly passed from props
+                        },
+                    });
 
-        setWeather(data);
-      } catch (err: any) {
-        setError(err.message || 'Error fetching weather');
-      }
-    }
-
-    getWeather();
-  }, []);
-
-  if (error) return <div>Error: {error}</div>;
-  if (!weather) return <div>Loading weather...</div>;
-
-  return (
-    <div>
-      <h2>Weather in {weather.name}</h2>
-      <p>{weather.weather[0].description}</p>
-      <p>{weather.main.temp}°C</p>
-    </div>
-  );
+                    const data = await response.json();
+                    console.log('API response:', data);
+                    setWeather(data);
+                } catch (error) {
+                    console.error("API call failed:", error);
+                    setWeather("API call failed");
+                }
+            }
+        }
+        getWeather();
+    }, [token]); // dependency added
+    if (!weather) return <div>Loading weather...</div>;
+    return (
+        <div>
+            <h2>Weather in {weather}</h2>
+        </div>
+    );
 };
 
 export default Weather;
