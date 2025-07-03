@@ -40,7 +40,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       }
       const weatherData = await weatherResponse.json();
       const { main: {temp} } = weatherData;
-      const tempInCelsius = (temp - 273.15).toFixed(2); // Convert Kelvin to Celsius
+      const tempinfahrenheit = ((temp - 273.15) * 9/5 + 32).toFixed(2); // Convert Kelvin to Fahrenheit
       //arulraj joseph - you can use weatherData to get more details like temperature, humidity, etc.
       if (Array.isArray(lcationData) && lcationData.length > 0) {
         return {
@@ -50,7 +50,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
             "Access-Control-Allow-Headers": "*",
             "Access-Control-Allow-Methods": "*",
           },
-          body: JSON.stringify({ name, state, country, temperature: tempInCelsius }),
+          body: JSON.stringify({ name, state, country, temperature: tempinfahrenheit }),
         };
       }
       else {
